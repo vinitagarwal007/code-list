@@ -1,6 +1,6 @@
 import Editor from "@monaco-editor/react";
 import { Button, Input, Select } from "@chakra-ui/react";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import css from "./form.module.css";
 import axios from "axios";
 axios.defaults.baseURL = import.meta.env.VITE_SERVER_URL ;
