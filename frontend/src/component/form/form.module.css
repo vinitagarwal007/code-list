@@ -1,0 +1,38 @@
+.form {
+    width: 85vw;
+    height: 80%;
+    border-radius: 10px;
+    background-color: #1B263B;
+    border: 1px whitesmoke solid;
+    overflow: auto;
+    padding: 2%;
+    display: flex;
+    justify-content: space-between;
+    color: #E0E1DD;
+}
+.form > .submission{
+    display: flex;
+    justify-content: space-evenly;
+    flex-direction: column;
+    width: 48%;
+}
+.form > .sourceCode{
+    display: flex;
+    justify-content: space-evenly;
+    flex-direction: column;
+    width: 48%;
+}
+.element{
+    color: white;
+}
+.submitBtn{
+    height: 12%;
+}
+option{
+    background: #0D1B2A;
+    color: #1B263B;
+}
+.editor{
+    margin: 2%;
+    height: 100%;
+}
