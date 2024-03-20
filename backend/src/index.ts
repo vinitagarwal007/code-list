@@ -1,9 +1,13 @@
 require("dotenv").config(); //configuring the environment variables
 import { dbProvider } from "../db/provider";
 import { logService } from "../Utils/logger";
-import express from "express";
+import express, { NextFunction } from "express";
 const app = express();
 const fs = require("fs");
+import cors from "cors";
+import { submissionRouter } from "./routes/submission";
+import { errorRouter } from "./routes/error";
+const PORT = process.env.SERVER_PORT || 3000;
 
 const dbOptions = {
   host: process.env.MYSQL_HOST,
@@ -17,13 +21,24 @@ const dbOptions = {
 };
 
 const logger = new logService("index.ts"); //create a logger
-const provider = new dbProvider(dbOptions); //create db object
+export const provider = new dbProvider(dbOptions); //create db object
 
 const init = async () => {
   await provider.init();
   logger.log("DB Connected");
   await provider.initTables();
-  provider.makeQuery("select * from submission", []);
 };
-
 init();
+
+//server config
+app.use(cors());
+app.use(express.json());
+app.use("/submission", submissionRouter);
+app.use("/health", (req,res)=>{
+  res.sendStatus(200)
+});
+app.use("*",errorRouter); //handle endpoint not found
+
+app.listen(PORT, () => {
+  logger.log("Server started on port", PORT);
+});

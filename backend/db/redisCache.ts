@@ -20,7 +20,8 @@ export class DbCacheProvider {
 
   async checkCache(query: string) {
     var cacheResult: string | null = await this.client.get(query);
-    if (cacheResult) {
+    if (cacheResult && query.includes("select")) {
+      //only cache check the select command
       var cacheJson = JSON.parse(cacheResult);
       var cacheExpireTime = new Date(cacheJson.time);
       cacheExpireTime.setSeconds(cacheExpireTime.getSeconds() + expireTime); //add the expiration time to cached time to check if it exceeds current time
@@ -35,11 +36,13 @@ export class DbCacheProvider {
   }
 
   async putCache(query: string, value: any) {
-    var cacheValue: cacheValue = {
-      time: new Date(),
-      value: value,
-    };
-    this.client.set(query, JSON.stringify(cacheValue));
+    if (query.includes("select")) {
+      var cacheValue: cacheValue = {
+        time: new Date(),
+        value: value,
+      };
+      this.client.set(query, JSON.stringify(cacheValue));
+    }
   }
   async expireCache(query: string) {
     await this.client.del(query);

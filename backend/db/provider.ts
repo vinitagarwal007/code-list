@@ -36,14 +36,14 @@ export class dbProvider {
     }
   }
 
-  async makeQuery(query: string, value: Array<string>) {
-    await doQuery(this.cache, this.connection, query, value);
+  async makeQuery(query: string, value: Array<any> = []) {
+    return await doQuery(this.cache, this.connection, query, value);
   }
 }
 
 async function createTables(
   cache: DbCacheProvider,
-  connection: mysql.Connection,
+  connection: mysql.Connection
 ) {
   var query: string = `CREATE TABLE submission(
     username VARCHAR(100) NOT NULL,
@@ -53,6 +53,7 @@ async function createTables(
     output LONGTEXT NULL,
     token LONGTEXT NULL,
     PRIMARY KEY (username));`;
+
   doQuery(cache, connection, query, [], false);
 }
 
@@ -61,15 +62,18 @@ async function doQuery(
   connection: mysql.Connection,
   queryString: string,
   value: Array<any>,
-  toCache: Boolean = true,
+  toCache: Boolean = true
 ) {
-  logger.log("Query Received", queryString);
   var searchString = connection.format(queryString, value);
-  var cacheData = toCache ? await cache.checkCache(searchString) : false;
+  var cacheData = await cache.checkCache(searchString);
+
   if (cacheData) {
-    logger.log("cached:", cacheData);
+    logger.log("Cache Found");
+    return cacheData;
   } else {
     var result = await connection.query(queryString, value);
-    cache.putCache(queryString, result[0]);
+    result = JSON.parse(JSON.stringify(result[0])); //convert row data packets to array
+    cache.putCache(searchString, result);
+    return result;
   }
 }
