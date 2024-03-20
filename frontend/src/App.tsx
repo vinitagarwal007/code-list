@@ -5,7 +5,7 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 function App() {
   const [currentPage, setCurrentPage] = useState(1);
-  const handlePageButton = (e) => {
+  const handlePageButton = (e:any) => {
     setCurrentPage(e.target.id);
   };
   return (
