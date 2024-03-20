@@ -22,8 +22,9 @@ function languageFromId(value:string|number) {
 }
 
 export default function Form() {
+  const formInitState = { language: '93',code:'// Paste or Type your Code',username:'',stdin:'' }
   const [submitting, setsubmitting] = useState(false);
-  const [input, setInput] = useState({ language: '93',code:'',username:'',stdin:'' });
+  const [input, setInput] = useState(formInitState);
   const editorRef = useRef()
   const handleInputChange = (e: any) =>
     setInput({ ...input, [e.target.name]: e.target.value });
@@ -39,6 +40,7 @@ export default function Form() {
       var result = await axios.post("/submission/new", {...input,code:editorRef.current.getValue() || ""});
       if (result.status == 200) {
         toast.success("Data Submitted Successfully");
+        setInput(formInitState)
       }else{
         toast.error("Error While Submitting Data")
       }
@@ -122,6 +124,7 @@ export default function Form() {
                   enabled: false,
                 },
               }}
+              value={input.code}
               onMount={handleMount}
             />
           </div>

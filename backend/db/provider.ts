@@ -12,12 +12,12 @@ export class dbProvider {
   }
 
   async init() {
-    this.connection = await mysql.createConnection(this.connectionOption);
-    await this.connection.connect();
-    this.cache = new DbCacheProvider({
-      url: String(process.env.REDIS_URL),
-    });
-    this.cache.init();
+      this.connection = await mysql.createConnection(this.connectionOption);
+      await this.connection.connect();
+      this.cache = new DbCacheProvider({
+        url: String(process.env.REDIS_URL),
+      });
+      this.cache.init();
   }
 
   async initTables() {
@@ -39,20 +39,30 @@ export class dbProvider {
   async makeQuery(query: string, value: Array<any> = []) {
     return await doQuery(this.cache, this.connection, query, value);
   }
+  async insertTableData(table: string, data: object) {
+    var keyList = Object.keys(data)
+    var valueList = Object.values(data)
+    var valueString = '?,'.repeat(valueList.length).slice(0,-1)
+    var queryString = `insert into ${table}(${keyList.join(",")}) values(${valueString})`;
+    return await doQuery(this.cache, this.connection, queryString, valueList);
+  }
 }
 
 async function createTables(
   cache: DbCacheProvider,
   connection: mysql.Connection
 ) {
-  var query: string = `CREATE TABLE submission(
-    username VARCHAR(100) NOT NULL,
-    language VARCHAR(45) NULL,
-    code LONGTEXT NULL,
-    stdin LONGTEXT NULL,
-    output LONGTEXT NULL,
-    token LONGTEXT NULL,
-    PRIMARY KEY (username));`;
+  var query: string = `CREATE TABLE 'submission' (
+    'id' int NOT NULL AUTO_INCREMENT,
+    'username' varchar(100) NOT NULL,
+    'language' varchar(45) DEFAULT NULL,
+    'code' longtext,
+    'stdin' longtext,
+    'output' longtext,
+    'token' longtext,
+    'submissionDate' varchar(45) DEFAULT NULL,
+    PRIMARY KEY ('id')
+  )`;
 
   doQuery(cache, connection, query, [], false);
 }
@@ -61,7 +71,7 @@ async function doQuery(
   cache: DbCacheProvider,
   connection: mysql.Connection,
   queryString: string,
-  value: Array<any>,
+  value: Array<any> = [],
   toCache: Boolean = true
 ) {
   var searchString = connection.format(queryString, value);

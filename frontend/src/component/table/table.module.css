@@ -1,0 +1,17 @@
+.tableContainer{
+    width: 85vw;
+    height: 80%;
+    border-radius: 10px;
+    background-color: #1B263B;
+    border: 1px whitesmoke solid;
+    padding: 2%;
+    display: flex;
+    justify-content: space-between;
+    color: #E0E1DD;
+}
+td{
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 50ch;
+}

@@ -14,34 +14,43 @@ export class DbCacheProvider {
     this.Options = serverUrl;
   }
   async init() {
-    this.client = await redis.createClient(this.Options);
-    await this.client.connect();
+      this.client = await redis.createClient(this.Options);
+      await this.client.connect();
   }
 
   async checkCache(query: string) {
-    var cacheResult: string | null = await this.client.get(query);
-    if (cacheResult && query.includes("select")) {
-      //only cache check the select command
-      var cacheJson = JSON.parse(cacheResult);
-      var cacheExpireTime = new Date(cacheJson.time);
-      cacheExpireTime.setSeconds(cacheExpireTime.getSeconds() + expireTime); //add the expiration time to cached time to check if it exceeds current time
-      if (compareDates(cacheExpireTime, new Date()) >= 0) {
-        return cacheJson.value;
-      } else {
-        await this.client.del(query);
-        return false;
+    try {
+      var cacheResult: string | null = await this.client.get(query);
+      if (cacheResult && query.includes("select")) {
+        //only cache check the select command
+        var cacheJson = JSON.parse(cacheResult);
+        var cacheExpireTime = new Date(cacheJson.time);
+        cacheExpireTime.setSeconds(cacheExpireTime.getSeconds() + expireTime); //add the expiration time to cached time to check if it exceeds current time
+        if (compareDates(cacheExpireTime, new Date()) >= 0) {
+          return cacheJson.value;
+        } else {
+          await this.client.del(query);
+          return false;
+        }
       }
+    } catch (err) {
+      //return false on cache failure while redis try to reconnect
+      this.init();
     }
     return false;
   }
 
   async putCache(query: string, value: any) {
-    if (query.includes("select")) {
-      var cacheValue: cacheValue = {
-        time: new Date(),
-        value: value,
-      };
-      this.client.set(query, JSON.stringify(cacheValue));
+    try {
+      if (query.includes("select")) {
+        var cacheValue: cacheValue = {
+          time: new Date(),
+          value: value,
+        };
+        this.client.set(query, JSON.stringify(cacheValue));
+      }
+    } catch (err) {
+      this.init;
     }
   }
   async expireCache(query: string) {

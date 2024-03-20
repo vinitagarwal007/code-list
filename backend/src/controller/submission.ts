@@ -4,19 +4,17 @@ import { z } from "zod";
 import { logService } from "../../Utils/logger";
 const logger = new logService("controller->submission.ts");
 const submissionSchema = z.object({
-  username: z.string(),
-  language: z.string(),
-  code: z.string(),
-  stdin: z.string(),
+  username: z.string().trim().min(1),
+  language: z.string().trim().min(1),
+  code: z.string().trim().min(1),
+  stdin: z.string().trim().min(1),
+  submissionDate: z.string().trim().min(1)
 });
 export const newSubmission = async (req: Request, res: Response) => {
   try {
-    logger.log(req.body)
+    req.body.submissionDate = logger.getDate().toString()
     const submissionData = submissionSchema.parse(req.body);
-    var result = await provider.makeQuery(
-      "insert into submission (username,language,code,stdin) values (?,?,?,?)",
-      Object.values(submissionData)
-    );
+    var result = await provider.insertTableData("submission", submissionData);
     res.send(result);
   } catch (error: any) {
     logger.error(error);

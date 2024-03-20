@@ -23,22 +23,24 @@ const dbOptions = {
 const logger = new logService("index.ts"); //create a logger
 export const provider = new dbProvider(dbOptions); //create db object
 
-const init = async () => {
-  await provider.init();
-  logger.log("DB Connected");
-  await provider.initTables();
-};
-init();
-
 //server config
 app.use(cors());
 app.use(express.json());
 app.use("/submission", submissionRouter);
-app.use("/health", (req,res)=>{
-  res.sendStatus(200)
+app.use("/health", (req, res) => {
+  res.sendStatus(200);
 });
-app.use("*",errorRouter); //handle endpoint not found
+app.use("*", errorRouter); //handle endpoint not found
 
-app.listen(PORT, () => {
-  logger.log("Server started on port", PORT);
-});
+const init = async () => {
+  try {
+    await provider.init();
+    await provider.initTables();
+    app.listen(PORT, async () => {
+      logger.log("Server started on port", PORT);
+    });
+  } catch (err) {
+    logger.log(err);
+  }
+};
+init();

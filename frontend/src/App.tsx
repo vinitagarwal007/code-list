@@ -1,6 +1,7 @@
 import css from "./App.module.css";
 import { useState } from "react";
 import Form from "./component/form/form";
+import SubmissionTable from "./component/table/table";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 function App() {
@@ -33,7 +34,7 @@ function App() {
             </button>
           </div>
         </div>
-        <div className={css.holder}>{currentPage == 1 ? <Form /> : <></>}</div>
+        <div className={css.holder}>{currentPage == 1 ? <Form /> : <SubmissionTable />}</div>
       </div>
       <ToastContainer />
     </>

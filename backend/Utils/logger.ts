@@ -5,12 +5,13 @@ export class logService {
     this.id = id;
   }
   log(...value: any) {
-    console.info(getDate(), this.id, ...value); //can use any other logger api
+    console.info(this.getDate(), this.id, ...value); //can use any other logger api
   }
   error(...value: any) {
-    console.error(getDate(), this.id, ...value); //can use any other logger api
+    console.error(this.getDate(), this.id, ...value); //can use any other logger api
+  }
+  getDate() {
+    return new Date().toLocaleString("en-GB", { timeZone: "IST" });
   }
 }
-function getDate() {
-  return new Date().toLocaleString("en-GB", { timeZone: "IST" });
-}
+
