@@ -1,1 +1,1 @@
-import css from './table.module.css'
+// import css from './table.module.css'
