@@ -6,7 +6,7 @@ import axios from "axios";
 axios.defaults.baseURL = import.meta.env.VITE_SERVER_URL ;
 import { toast } from "react-toastify";
 
-function languageFromId(value) {
+function languageFromId(value:string|number) {
   switch (value) {
     case "76":
       return "cpp";
@@ -23,19 +23,20 @@ function languageFromId(value) {
 
 export default function Form() {
   const [submitting, setsubmitting] = useState(false);
-  const [input, setInput] = useState({ language: '93' });
+  const [input, setInput] = useState({ language: '93',code:'',username:'',stdin:'' });
   const editorRef = useRef()
   const handleInputChange = (e: any) =>
     setInput({ ...input, [e.target.name]: e.target.value });
-
-  const handleCodeChange = (value: any) => setInput({ ...input, code: value });
+  // @ts-ignore
+  const handleCodeChange = (value: any) => setInput({ ...input, "code": value });
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
 
     try {
       setsubmitting(true);
-      var result = await axios.post("/submission/new", {...input,code:editorRef.current.getValue()});
+      // @ts-ignore
+      var result = await axios.post("/submission/new", {...input,code:editorRef.current.getValue() || ""});
       if (result.status == 200) {
         toast.success("Data Submitted Successfully");
       }else{
@@ -49,7 +50,7 @@ export default function Form() {
   };
 
 
-  const handleMount = (editor,monaco) =>{
+  const handleMount = (editor:any) =>{
     editorRef.current = editor;
     editor.focus()
   }
@@ -62,7 +63,7 @@ export default function Form() {
           </center>
           <Input
             placeholder="Username"
-            value={input.user}
+            value={input.username}
             name="username"
             onChange={handleInputChange}
             required
@@ -71,7 +72,7 @@ export default function Form() {
           <Input
             color={"white"}
             placeholder="stdIn"
-            value={input.stdIn}
+            value={input.stdin}
             name="stdin"
             onChange={handleInputChange}
             required
