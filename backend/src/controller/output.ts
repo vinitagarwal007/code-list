@@ -4,7 +4,7 @@ import axios from "axios";
 import { logService } from "../../Utils/logger";
 const logger = new logService("controller->output.ts");
 const { base64encode, base64decode } = require("nodejs-base64");
-
+const rapid_api_key = process.env.RAPID_API_KEY
 export async function getOutput(submission: any) {
   const payload = {
     language_id: submission.language,
@@ -25,7 +25,7 @@ export async function getOutput(submission: any) {
     headers: {
       "content-type": "application/json",
       "Content-Type": "application/json",
-      "X-RapidAPI-Key": "83879177e7msh5837393cf508e6dp1e746ajsn5330d34f5e8e",
+      "X-RapidAPI-Key": rapid_api_key,
       "X-RapidAPI-Host": "judge0-ce.p.rapidapi.com",
     },
     data: payload,
