@@ -1,5 +1,5 @@
 import css from "./modal.module.css";
-import { Button, Modal, Text, Textarea, useDisclosure } from "@chakra-ui/react";
+import { Button, Textarea } from "@chakra-ui/react";
 import {
   Modal as Mod,
   ModalOverlay,
