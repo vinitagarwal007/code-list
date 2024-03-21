@@ -1,25 +1,11 @@
+import css from "./form.module.css";
 import Editor from "@monaco-editor/react";
 import { Button, Input, Select } from "@chakra-ui/react";
 import { useRef, useState } from "react";
-import css from "./form.module.css";
 import axios from "axios";
 axios.defaults.baseURL = import.meta.env.VITE_SERVER_URL ;
 import { toast } from "react-toastify";
-
-function languageFromId(value:string|number) {
-  switch (value) {
-    case "76":
-      return "cpp";
-    case "91":
-      return "java";
-    case "93":
-      return "javascript";
-    case "71":
-      return "python";
-    default:
-      return "javascript";
-  }
-}
+import { languageFromId } from "../../util/languageCollection";
 
 export default function Form() {
   const formInitState = { language: '93',code:'// Paste or Type your Code',username:'',stdin:'' }
@@ -37,7 +23,7 @@ export default function Form() {
     try {
       setsubmitting(true);
       // @ts-ignore
-      var result = await axios.post("/submission/new", {...input,code:editorRef.current.getValue() || ""});
+      var result = await axios.post("/submission/new", {...input});
       if (result.status == 200) {
         toast.success("Data Submitted Successfully");
         setInput(formInitState)

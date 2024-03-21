@@ -14,6 +14,9 @@ export const newSubmission = async (req: Request, res: Response) => {
   try {
     req.body.submissionDate = logger.getDate().toString()
     const submissionData = submissionSchema.parse(req.body);
+    submissionData.code.replace("// Paste or Type your Code"," ")
+    submissionData.code = btoa(submissionData.code)
+    submissionData.stdin = btoa(submissionData.stdin)
     var result = await provider.insertTableData("submission", submissionData);
     res.send(result);
   } catch (error: any) {
@@ -23,6 +26,13 @@ export const newSubmission = async (req: Request, res: Response) => {
 };
 
 export const getSubmission = async (req: Request, res: Response) => {
-  var result = await provider.makeQuery("select * from submission");
+  var result = await provider.selectAll("submission");
+  result = result.map((e:any)=>{
+    var temp:any = {}
+    temp.code = atob(e.code)
+    temp.output = e.output ? atob(e.output) : ""
+    temp.stdin = atob(e.stdin)
+    return {...e,...temp}
+  })
   res.send(JSON.stringify(result));
 };

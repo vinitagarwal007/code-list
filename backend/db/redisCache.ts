@@ -42,7 +42,7 @@ export class DbCacheProvider {
 
   async putCache(query: string, value: any) {
     try {
-      if (query.includes("select")) {
+      if (query.includes("select") && value.length != 0) {
         var cacheValue: cacheValue = {
           time: new Date(),
           value: value,
@@ -55,6 +55,13 @@ export class DbCacheProvider {
   }
   async expireCache(query: string) {
     await this.client.del(query);
+    for await (const key of this.client.scanIterator({
+      TYPE: 'string', // `SCAN` only
+      MATCH: `*${query}*`,
+      COUNT: 100
+    })) {
+      await this.client.del(key);
+    }
   }
 }
 

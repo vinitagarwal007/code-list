@@ -12,12 +12,12 @@ export class dbProvider {
   }
 
   async init() {
-      this.connection = await mysql.createConnection(this.connectionOption);
-      await this.connection.connect();
-      this.cache = new DbCacheProvider({
-        url: String(process.env.REDIS_URL),
-      });
-      this.cache.init();
+    this.connection = await mysql.createConnection(this.connectionOption);
+    await this.connection.connect();
+    this.cache = new DbCacheProvider({
+      url: String(process.env.REDIS_URL),
+    });
+    this.cache.init();
   }
 
   async initTables() {
@@ -40,11 +40,31 @@ export class dbProvider {
     return await doQuery(this.cache, this.connection, query, value);
   }
   async insertTableData(table: string, data: object) {
-    var keyList = Object.keys(data)
-    var valueList = Object.values(data)
-    var valueString = '?,'.repeat(valueList.length).slice(0,-1)
+    var keyList = Object.keys(data);
+    var valueList = Object.values(data);
+    var valueString = "?,".repeat(valueList.length).slice(0, -1);
     var queryString = `insert into ${table}(${keyList.join(",")}) values(${valueString})`;
+    this.clearTableCache(table); //clear cache on insert
     return await doQuery(this.cache, this.connection, queryString, valueList);
+  }
+
+  async selectAll(table: string) {
+    var queryString = `select * from ${table}`;
+    return await doQuery(this.cache, this.connection, queryString);
+  }
+
+  async updateId(table: string, id: number, data: any) {
+    var updateString = [];
+    for (var key in data) {
+      updateString.push(`${key}='${data[key]}'`);
+    }
+    var queryString = `update ${table} set ${updateString} where id=${id}`;
+    this.clearTableCache("submission")
+    return await doQuery(this.cache, this.connection, queryString);
+  }
+
+  async clearTableCache(table: string) {
+    this.cache.expireCache(table);
   }
 }
 
@@ -52,16 +72,15 @@ async function createTables(
   cache: DbCacheProvider,
   connection: mysql.Connection
 ) {
-  var query: string = `CREATE TABLE 'submission' (
-    'id' int NOT NULL AUTO_INCREMENT,
-    'username' varchar(100) NOT NULL,
-    'language' varchar(45) DEFAULT NULL,
-    'code' longtext,
-    'stdin' longtext,
-    'output' longtext,
-    'token' longtext,
-    'submissionDate' varchar(45) DEFAULT NULL,
-    PRIMARY KEY ('id')
+  var query: string = `CREATE TABLE submission (
+    id int NOT NULL AUTO_INCREMENT,
+    username varchar(100) NOT NULL,
+    language varchar(45) DEFAULT NULL,
+    code longtext,
+    stdin longtext,
+    output longtext,
+    submissionDate varchar(45) DEFAULT NULL,
+    PRIMARY KEY (id)
   )`;
 
   doQuery(cache, connection, query, [], false);

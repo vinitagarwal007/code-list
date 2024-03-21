@@ -7,6 +7,7 @@ const fs = require("fs");
 import cors from "cors";
 import { submissionRouter } from "./routes/submission";
 import { errorRouter } from "./routes/error";
+import { outputRouter } from "./routes/output";
 const PORT = process.env.SERVER_PORT || 3000;
 
 const dbOptions = {
@@ -27,6 +28,7 @@ export const provider = new dbProvider(dbOptions); //create db object
 app.use(cors());
 app.use(express.json());
 app.use("/submission", submissionRouter);
+app.use("/output", outputRouter);
 app.use("/health", (req, res) => {
   res.sendStatus(200);
 });

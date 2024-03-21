@@ -1,0 +1,15 @@
+.editor{
+    margin: 2%;
+    width: 50%;
+    height: 50vh;
+}
+.container{
+    display: flex;
+}
+.outputSection{
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+    justify-content: space-evenly;
+    padding: 2vw;
+}
