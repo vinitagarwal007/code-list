@@ -63,7 +63,7 @@ useEffect(()=>{
           <ModalBody className={css.container}>
             <div className={css.editor}>
             <Editor
-              defaultValue="// Paste or Type your Code"
+              defaultValue={data.code}
               theme="vs-dark"
               onChange={handleCodeChange}
               language={languageFromId(data.language)}

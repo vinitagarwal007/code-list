@@ -25,7 +25,7 @@ export async function getOutput(submission: any) {
     headers: {
       "content-type": "application/json",
       "Content-Type": "application/json",
-      "X-RapidAPI-Key": "70363dcd2bmsh236e4dc1dcdb94ep19426ajsna7028778ccc9",
+      "X-RapidAPI-Key": "83879177e7msh5837393cf508e6dp1e746ajsn5330d34f5e8e",
       "X-RapidAPI-Host": "judge0-ce.p.rapidapi.com",
     },
     data: payload,
@@ -34,7 +34,7 @@ export async function getOutput(submission: any) {
   try {
     const response = await axios.request(options);
     logger.log(response.data);
-    const { stdout, stderr, compile_output, status } = response.data;
+    const { stdout, compile_output, status } = response.data;
 
     const outputString = `${status.description}
     \n-----Output-----\n

@@ -15,18 +15,12 @@ export const newSubmission = async (req: Request, res: Response) => {
   try {
     req.body.submissionDate = logger.getDate().toString()
     const submissionData = submissionSchema.parse(req.body);
+    var output:any = await getOutput(submissionData)
     submissionData.code = btoa(submissionData.code)
     submissionData.stdin = btoa(submissionData.stdin)
-    logger.log(submissionData)
-    var result = await provider.insertTableData("submission", submissionData);
-    var output:any = await getOutput(submissionData)
-    logger.log(output)
-    await provider.updateId("submission", result.insertId, {
-      output: btoa(output.outputString),
-      stdin: btoa(submissionData.stdin),
-      code: btoa(submissionData.code),
-    });
-    res.json({'db':result,'output':output});
+    var submissionOutput = btoa(output.outputString)
+    var result = await provider.insertTableData("submission", {...submissionData,output:submissionOutput});
+    res.json({'db':result});
   } catch (error: any) {
     logger.error(error);
     res.status(400).send("invalid or duplicate data");
@@ -42,5 +36,6 @@ export const getSubmission = async (req: Request, res: Response) => {
     temp.stdin = atob(e.stdin)
     return {...e,...temp}
   })
+  // logger.log(result)
   res.send(JSON.stringify(result));
 };
