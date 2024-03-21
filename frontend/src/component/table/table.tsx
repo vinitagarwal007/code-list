@@ -25,10 +25,6 @@ export default function SubmissionTable() {
   const [sorted, setSorted] = useState(false);
   const effectRan = useRef(false);
 
-  function NewlineText(props: any) {
-    const text = props.text;
-    return text.split("\n").map((str: any) => <p>{str}</p>);
-  }
   const handleReload = () => {
     getData();
   };
