@@ -1,0 +1,12 @@
+MYSQL_HOST = <mysql_host>
+MYSQL_USER = <mysql_username>
+MYSQL_PASS = <mysql_password>
+MYSQL_SSL = <location_of _ssl_certificate>
+MYSQL_PORT = <mysql_port>
+MYSQL_DATABASE = <mysql_db>
+
+SERVER_URL = <deployed_server_port> 
+SERVER_PORT = <server_port>
+
+REDIS_URL = <redis_server>
+REDIS_EXPIRE = "60" #expiration time of cache in seconds
