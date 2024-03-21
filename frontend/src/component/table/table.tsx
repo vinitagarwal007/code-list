@@ -81,6 +81,7 @@ export default function SubmissionTable() {
                 <Th color={"white"}>Language</Th>
                 <Th color={"white"}>Code</Th>
                 <Th color={"white"}>StdIn</Th>
+                <Th color={"white"}>StdOut</Th>
                 <Th isNumeric>
                   <RepeatIcon
                     color={"white"}
@@ -105,7 +106,14 @@ export default function SubmissionTable() {
                       {e.code.length > 100 ? <span>...</span> : <></>}
                     </Td>
                     <Td style={{ whiteSpace: "pre-line" }}>
-                      {e.stdin.replace(/\\n|\\r\\n|\\n\\r|\\r/g, "\n")}
+                      {e.stdin.slice(0, 100).replace(/\\n|\\r\\n|\\n\\r|\\r/g, "\n")}
+                      {e.stdin.length > 100 ? <span>...</span> : <></>}
+
+                    </Td>
+                    <Td style={{ whiteSpace: "pre-line" }}>
+                      {e.output.slice(0, 50).replace(/\\n|\\r\\n|\\n\\r|\\r/g, "\n")}
+                      {e.output.length > 100 ? <span>...</span> : <></>}
+
                     </Td>
                     <Td isNumeric>
                       <button id={String(idx)} onClick={handleElementClick}>

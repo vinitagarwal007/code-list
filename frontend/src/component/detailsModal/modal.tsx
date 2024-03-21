@@ -19,18 +19,28 @@ export default function DetailModal(props: any) {
   const [stdin, setStdin] = useState('');
   const [output, setOutput] = useState('');
   const finalRef = useRef(null);
+  const editorRef = useRef()
+  const [code, setCode] = useState("");
+
   const handleStdinChange = (e: any) => {
     setStdin(e.target.value);
   };
   
   const handleOutputClick = async () => {
     setOutput("Waiting For Server Response....")
-    var result = await axios.post("/output/calculate", {
-      submission: data,
-      stdin: stdin,
-    });
+    // @ts-ignore
+    data.code = editorRef.current.getValue()
+    data.stdin = stdin
+    var result = await axios.post("/output/calculate", data);
     setOutput(result.data)
   };
+
+  const handleMount = (editor:any) =>{
+    editorRef.current = editor;
+    editor.focus()
+  }
+
+  const handleCodeChange = (value: any) => setCode(value);
 
 useEffect(()=>{
     setOutput(data.output)
@@ -52,17 +62,19 @@ useEffect(()=>{
           <ModalCloseButton />
           <ModalBody className={css.container}>
             <div className={css.editor}>
-              <Editor
-                theme="vs-dark"
-                language={languageFromId(data.language)}
-                options={{
-                  minimap: {
-                    enabled: false,
-                  },
-                  readOnly: true,
-                }}
-                value={data.code}
-              />
+            <Editor
+              defaultValue="// Paste or Type your Code"
+              theme="vs-dark"
+              onChange={handleCodeChange}
+              language={languageFromId(data.language)}
+              options={{
+                minimap: {
+                  enabled: false,
+                },
+              }}
+              value={code}
+              onMount={handleMount}
+            />
               <center>
                 <label>Submitted Code in {languageFromId(data.language)}</label>
               </center>

@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { getOutput } from "../controller/output";
+import { OutputHandler } from "../controller/output";
 export const outputRouter = Router();
 
-outputRouter.post("/calculate",getOutput)
+outputRouter.post("/calculate",OutputHandler)

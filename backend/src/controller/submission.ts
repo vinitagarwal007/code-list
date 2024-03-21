@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { provider } from "..";
 import { z } from "zod";
 import { logService } from "../../Utils/logger";
+import { getOutput } from "./output";
 const logger = new logService("controller->submission.ts");
 const submissionSchema = z.object({
   username: z.string().trim().min(1),
@@ -14,11 +15,18 @@ export const newSubmission = async (req: Request, res: Response) => {
   try {
     req.body.submissionDate = logger.getDate().toString()
     const submissionData = submissionSchema.parse(req.body);
-    submissionData.code.replace("// Paste or Type your Code"," ")
     submissionData.code = btoa(submissionData.code)
     submissionData.stdin = btoa(submissionData.stdin)
+    logger.log(submissionData)
     var result = await provider.insertTableData("submission", submissionData);
-    res.send(result);
+    var output:any = await getOutput(submissionData)
+    logger.log(output)
+    await provider.updateId("submission", result.insertId, {
+      output: btoa(output.outputString),
+      stdin: btoa(submissionData.stdin),
+      code: btoa(submissionData.code),
+    });
+    res.json({'db':result,'output':output});
   } catch (error: any) {
     logger.error(error);
     res.status(400).send("invalid or duplicate data");
